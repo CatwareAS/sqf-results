@@ -12,9 +12,4 @@ const config = {
 
 firebase.initializeApp(config);
 
-const databaseRef = firebase.database().ref();
-
-export const players = databaseRef.child("players");
-export const clubs = databaseRef.child("clubs");
-export const gameTypes = ["Standard", "Egyptian"];
-
+export const database = firebase.database();

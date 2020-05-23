@@ -1,4 +1,4 @@
-import {players} from '../DB/firebase';
+import {players} from '../DAO/firebase';
 
 players.set([
     {id: "4136", name: "Petro Krasnomovets"},

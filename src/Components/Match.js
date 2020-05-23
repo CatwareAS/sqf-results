@@ -1,51 +1,73 @@
-import React, {useState} from 'react';
-import * as data from '../Services/data';
+import React, {useEffect, useState} from 'react';
 import Game from "./Game";
+import {database} from '../DAO/firebase';
+
 
 function Match(props) {
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(new Date().toJSON().split('T')[0]);
+    const [games, setGames] = useState([]);
 
-    const [club, setClub] = useState(data.match.club);
-    const [games, setGames] = useState(data.match.games);
+    useEffect(() => {
+        console.log('useEffect on date change');
+        database.ref('/matches/' + date).on('value', data => {
+            console.log('JSON dataSnapshot: ' + JSON.stringify(data));
+            if (data.exists()) {
+                setGames(data.val().games);
+            } else {
+                setGames([]);
+            }
+        });
+    }, [date]);
 
-    //TODO: useEffect
+    // useEffect(() => {
+    //     console.log('useEffect on games change');
+    //     database.ref('/matches/' + date).set({games});
+    // }, [games]);
+
 
     const addGame = () => {
         setGames([...games, {
-            //TODO: find better way to create ID
-            id: games.length === 0 ? -1 : games[games.length - 1].id + 1,
+            id: games.length === 0 ? 1 : Math.max(...games.map(g => g.id)) + 1,
             playerId: props.players[0].id,
+            clubId: props.clubs[0].id,
             myScore: 0,
             opponentScore: 0,
-            gameType: props.gameTypes[0],
+            gameTypeId: props.gameTypes[0].id,
             comment: ''
         }]);
     }
 
     const removeGame = id => {
-        setGames(games => games.filter(g => g.id !== id));
+        const newGames = games.filter(g => g.id !== id);
+        setGames(newGames);
+        database.ref('/matches/' + date).set({games: newGames});
     }
 
     const saveGame = game => {
-        alert('Saving game: ' + JSON.stringify(game));
-    }
+        console.log('game: ' + JSON.stringify(game));
+        console.log('games: ' + JSON.stringify(games));
 
-    const loadGame = date => {
-        //TODO: implement
-        // let match = data.findByDate(date);
-        // setDate(match.date);
-        // setGames(match.games);
-        setDate(date);
+        //TODO: Why need to 'games' contains 'game' with old values?
+
+        const newGames = [...games];
+        const oldGame = newGames.find(g => g.id === game.id);
+        newGames[newGames.indexOf(oldGame)] = game;
+        setGames(newGames);
+
+        console.log('games: ' + JSON.stringify(newGames));
+        database.ref('/matches/' + date).set({games: newGames});
     }
 
     return (
         <div>
             <label>Date</label>
-            <input value={date} onChange={e => loadGame(e.target.value)} type={"date"}/>
+            <input value={date} onChange={e => setDate(e.target.value)} type={"date"}/>
+
             <button onClick={addGame}>Add Game</button>
 
             {games.map(
                 game => <Game players={props.players}
+                              clubs={props.clubs}
                               gameTypes={props.gameTypes}
                               game={game}
                               removeGame={() => removeGame(game.id)}
