@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-function Game(props) {
+export default function Game(props) {
     let game = props.game;
 
     const [id] = useState(game.id);
@@ -57,5 +57,3 @@ function Game(props) {
         </div>
     );
 }
-
-export default Game

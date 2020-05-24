@@ -1,15 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import Game from "./Game";
-import {database} from '../DAO/firebase';
+import {database} from '../Service/firebase';
 
 
-function Match(props) {
+export default function Match(props) {
     const [date, setDate] = useState(new Date().toJSON().split('T')[0]);
     const [games, setGames] = useState([]);
 
     useEffect(() => {
         database.ref('/matches/' + date).on('value', data => {
-            console.log('JSON dataSnapshot: ' + JSON.stringify(data));
             if (data.exists()) {
                 setGames(data.val().games);
             } else {
@@ -37,8 +36,8 @@ function Match(props) {
     }
 
     const saveGame = game => {
-        console.log('game: ' + JSON.stringify(game));
-        console.log('games: ' + JSON.stringify(games));
+        // console.log('game: ' + JSON.stringify(game));
+        // console.log('games: ' + JSON.stringify(games));
 
         //TODO: Why 'games' contains 'game' with old values?
 
@@ -47,7 +46,7 @@ function Match(props) {
         newGames[newGames.indexOf(oldGame)] = game;
         setGames(newGames);
 
-        console.log('games: ' + JSON.stringify(newGames));
+        // console.log('games: ' + JSON.stringify(newGames));
         database.ref('/matches/' + date).set({games: newGames});
     }
 
@@ -71,5 +70,3 @@ function Match(props) {
         </div>
     );
 }
-
-export default Match

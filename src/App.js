@@ -1,43 +1,46 @@
 import React, {useEffect, useState} from 'react';
-import Match from "./Components/Match";
-import {database} from './DAO/firebase';
-import Booking from "./Components/Booking";
+import Main from "./Components/Main";
+import Login from "./Components/Login";
+import {auth, database} from "./Service/firebase";
 
-function App() {
+export const UserContext = React.createContext();
 
-    const [players, setPlayers] = useState([]);
-    const [clubs, setClubs] = useState([]);
-    const [gameTypes, setGameTypes] = useState([]);
+export default function App() {
 
-    // database.ref('/gameTypes').set([{id: 1, name: 'Standard'}, {id: 2, name: 'Egyptian'}]);
+    const [authorized, setAuthorized] = useState(false);
+    const [user, setUser] = useState();
 
     useEffect(() => {
-        database.ref('/players').once('value').then(function (snapshot) {
-            setPlayers(snapshot.val());
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                setUser(user);
+                database.ref('/' + user.uid + '/authenticated').once('value').then(function (snapshot) {
+                    if (snapshot.val()) {
+                        setAuthorized(snapshot.val());
+                    } else {
+                        setUser(null);
+                    }
+                });
+            } else {
+                setAuthorized(false);
+            }
         });
     }, []);
 
-    useEffect(() => {
-        database.ref('/clubs').once('value').then(function (snapshot) {
-            setClubs(snapshot.val());
+    const logout = () => {
+        auth.signOut().then(function () {
+        }).catch(function (error) {
+            console.log('Error during logging out: ' + JSON.stringify(error));
         });
-    }, []);
-
-    useEffect(() => {
-        database.ref('/gameTypes').once('value').then(function (snapshot) {
-            setGameTypes(snapshot.val());
-        });
-    }, []);
+    }
 
     return (
-        clubs.length === 0 || players.length === 0 || gameTypes.length === 0 ?
-            'Loading...'
+        authorized ?
+            <UserContext.Provider value={user.uid}>
+                <button onClick={() => logout()}>Log Out</button>
+                <Main username={user.displayName}/>
+            </UserContext.Provider>
             :
-            <>
-                <Match players={players} clubs={clubs} gameTypes={gameTypes}/>
-                <Booking players={players} clubs={clubs}/>
-            </>
+            <Login/>
     );
-}
-
-export default App;
+};

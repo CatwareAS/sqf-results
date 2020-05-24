@@ -1,14 +1,13 @@
 import React, {useState} from 'react';
-import {database} from '../DAO/firebase';
+import {database} from '../Service/firebase';
 
 
-function Booking(props) {
+export default function Booking(props) {
     const [date, setDate] = useState(new Date().toJSON().split('.')[0]);
     const [selectedPlayers, setSelectedPlayers] = useState([]);
     const [clubId, setClub] = useState(props.clubs[0].id);
 
     const selectPlayer = e => {
-        console.log(e.target);
         if (e.target.checked) {
             setSelectedPlayers([...selectedPlayers, e.target.value])
         } else {
@@ -54,5 +53,3 @@ function Booking(props) {
         </div>
     );
 }
-
-export default Booking;

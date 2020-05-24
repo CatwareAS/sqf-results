@@ -1,4 +1,4 @@
-// import {players, clubs} from '../DAO/firebase';
+// import {players, clubs} from '../Service/firebase';
 
 let match = {
     date: "2020-05-20",
