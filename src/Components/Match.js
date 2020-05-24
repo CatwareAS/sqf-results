@@ -8,7 +8,6 @@ function Match(props) {
     const [games, setGames] = useState([]);
 
     useEffect(() => {
-        console.log('useEffect on date change');
         database.ref('/matches/' + date).on('value', data => {
             console.log('JSON dataSnapshot: ' + JSON.stringify(data));
             if (data.exists()) {
@@ -18,12 +17,6 @@ function Match(props) {
             }
         });
     }, [date]);
-
-    // useEffect(() => {
-    //     console.log('useEffect on games change');
-    //     database.ref('/matches/' + date).set({games});
-    // }, [games]);
-
 
     const addGame = () => {
         setGames([...games, {
@@ -47,7 +40,7 @@ function Match(props) {
         console.log('game: ' + JSON.stringify(game));
         console.log('games: ' + JSON.stringify(games));
 
-        //TODO: Why need to 'games' contains 'game' with old values?
+        //TODO: Why 'games' contains 'game' with old values?
 
         const newGames = [...games];
         const oldGame = newGames.find(g => g.id === game.id);

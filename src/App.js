@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Match from "./Components/Match";
 import {database} from './DAO/firebase';
+import Booking from "./Components/Booking";
 
 function App() {
 
@@ -32,7 +33,10 @@ function App() {
         clubs.length === 0 || players.length === 0 || gameTypes.length === 0 ?
             'Loading...'
             :
-            <Match players={players} clubs={clubs} gameTypes={gameTypes}/>
+            <>
+                <Match players={players} clubs={clubs} gameTypes={gameTypes}/>
+                <Booking players={players} clubs={clubs}/>
+            </>
     );
 }
 
