@@ -1,8 +1,12 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {database} from '../Service/firebase';
+import {UserContext} from "../App";
 
 
 export default function Booking(props) {
+
+    const uid = useContext(UserContext);
+
     const [date, setDate] = useState(new Date().toJSON().split('.')[0]);
     const [selectedPlayers, setSelectedPlayers] = useState([]);
     const [clubId, setClub] = useState(props.clubs[0].id);
@@ -24,7 +28,7 @@ export default function Booking(props) {
             minute: '2-digit',
             hourCycle: 'h23'
         }).format(new Date(date));
-        database.ref('/booking').set({
+        database.ref('/' + uid + '/booking').set({
             date: formattedDate,
             friends: props.players.filter(p => selectedPlayers.includes(p.id)),
             club: props.clubs.find(c => c.id === clubId)

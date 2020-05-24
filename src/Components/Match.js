@@ -1,21 +1,25 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Game from "./Game";
 import {database} from '../Service/firebase';
+import {UserContext} from "../App";
 
 
 export default function Match(props) {
+
+    const uid = useContext(UserContext);
+
     const [date, setDate] = useState(new Date().toJSON().split('T')[0]);
     const [games, setGames] = useState([]);
 
     useEffect(() => {
-        database.ref('/matches/' + date).on('value', data => {
+        database.ref('/' + uid + '/matches/' + date).on('value', data => {
             if (data.exists()) {
                 setGames(data.val().games);
             } else {
                 setGames([]);
             }
         });
-    }, [date]);
+    }, [date, uid]);
 
     const addGame = () => {
         setGames([...games, {
@@ -32,7 +36,7 @@ export default function Match(props) {
     const removeGame = id => {
         const newGames = games.filter(g => g.id !== id);
         setGames(newGames);
-        database.ref('/matches/' + date).set({games: newGames});
+        database.ref('/' + uid + '/matches/' + date).set({games: newGames});
     }
 
     const saveGame = game => {
@@ -47,7 +51,7 @@ export default function Match(props) {
         setGames(newGames);
 
         // console.log('games: ' + JSON.stringify(newGames));
-        database.ref('/matches/' + date).set({games: newGames});
+        database.ref('/' + uid + '/matches/' + date).set({games: newGames});
     }
 
     return (

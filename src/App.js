@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Main from "./Components/Main";
-import Login from "./Components/Login";
 import {auth, database} from "./Service/firebase";
+import firebase from 'firebase/app';
 
 export const UserContext = React.createContext();
 
@@ -27,6 +27,15 @@ export default function App() {
         });
     }, []);
 
+    const login = () => {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider).then(function (result) {
+            console.log('Logged in user: ' + result.user.displayName);
+        }).catch(function (error) {
+            console.log('Error while logging in: ' + JSON.stringify(error));
+        });
+    }
+
     const logout = () => {
         auth.signOut().then(function () {
         }).catch(function (error) {
@@ -41,6 +50,6 @@ export default function App() {
                 <Main username={user.displayName}/>
             </UserContext.Provider>
             :
-            <Login/>
+            <button onClick={() => login()}>Login</button>
     );
 };
