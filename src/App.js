@@ -2,8 +2,7 @@ import React, {useEffect, useState} from 'react';
 import Main from "./Components/Main";
 import {auth, database} from "./Service/firebase";
 import firebase from 'firebase/app';
-
-export const UserContext = React.createContext();
+import squashBallImage from './Components/squash-ball.png';
 
 export default function App() {
 
@@ -46,10 +45,14 @@ export default function App() {
     return (
         authorized ?
             <UserContext.Provider value={user.uid}>
-                <button onClick={() => logout()}>Log Out</button>
-                <Main username={user.displayName}/>
+                <Main username={user.displayName} logout={() => logout()}/>
             </UserContext.Provider>
             :
-            <button onClick={() => login()}>Login</button>
+            <div className="text-center">
+                <img src={squashBallImage} alt={"Login"} onClick={() => login()}/>
+            </div>
+
     );
 };
+
+export const UserContext = React.createContext();

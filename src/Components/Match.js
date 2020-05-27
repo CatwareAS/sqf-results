@@ -22,15 +22,20 @@ export default function Match(props) {
     }, [date, uid]);
 
     const addGame = () => {
-        setGames([...games, {
-            id: games.length === 0 ? 1 : Math.max(...games.map(g => g.id)) + 1,
-            playerId: props.players[0].id,
-            clubId: props.clubs[0].id,
-            myScore: 0,
-            opponentScore: 0,
-            gameTypeId: props.gameTypes[0].id,
+        //Copy some values from last registered game if any
+
+        const lg = games.length === 0 ? false : games[games.length - 1];
+
+        setGames([{
+            id: lg ? Math.max(...games.map(g => g.id)) + 1 : 1,
+            playerId: lg ? lg.playerId : props.players[0].id,
+            clubId: lg ? lg.clubId : props.clubs[0].id,
+            myScore: '',
+            opponentScore: '',
+            gameTypeId: lg ? lg.gameTypeId : props.gameTypes[0].id,
             comment: ''
-        }]);
+        },
+            ...games]);
     }
 
     const removeGame = id => {
@@ -56,20 +61,35 @@ export default function Match(props) {
 
     return (
         <div>
-            <label>Date</label>
-            <input value={date} onChange={e => setDate(e.target.value)} type={"date"}/>
 
-            <button onClick={addGame}>Add Game</button>
+            <div className="form-inline">
 
-            {games.map(
-                game => <Game players={props.players}
-                              clubs={props.clubs}
-                              gameTypes={props.gameTypes}
-                              game={game}
-                              removeGame={() => removeGame(game.id)}
-                              saveGame={(game) => saveGame(game)}
-                              key={game.id}/>
-            )}
+                <input value={date} onChange={e => setDate(e.target.value)} type={"date"}
+                       className={"form-control mb-1 mr-sm-1"}/>
+
+                <button onClick={addGame}
+                        className={"btn btn-outline-success form-control mb-1 mr-sm-1"}>Add Game
+                </button>
+
+            </div>
+
+            <hr/>
+
+            <div className="table-responsive">
+                {games.map(
+                    game =>
+                        <>
+                            <Game players={props.players}
+                                  clubs={props.clubs}
+                                  gameTypes={props.gameTypes}
+                                  game={game}
+                                  removeGame={() => removeGame(game.id)}
+                                  saveGame={(game) => saveGame(game)}
+                                  key={game.id}/>
+                            <hr/>
+                        </>
+                )}
+            </div>
 
         </div>
     );

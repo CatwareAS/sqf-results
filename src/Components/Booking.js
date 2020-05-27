@@ -36,24 +36,26 @@ export default function Booking(props) {
     }
 
     return (
-        <div>
-            <label>Date & Time</label>
-            <input value={date} onChange={e => setDate(e.target.value)} type={"datetime-local"}/>
+        <div className="row">
+            <div className="col-sm-2">
+                {props.players.map(p => (
+                    <div key={p.id} className={"form-check"}>
+                        <input type={"checkbox"} value={p.id} onChange={e => selectPlayer(e)}
+                               className={"form-check-input"}/>
+                        <label className={"form-check-label"}>{p.name}</label>
+                    </div>
+                ))}
+            </div>
 
-            <label>Clubs</label>
-            <select value={clubId} onChange={e => setClub(e.target.value)}>
-                {props.clubs.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-            </select>
+            <div className="col-sm-2">
+                <input value={date} onChange={e => setDate(e.target.value)} type={"datetime-local"}
+                       className={"form-control mb-1 mr-sm-1"}/>
+                <select value={clubId} onChange={e => setClub(e.target.value)} className={"form-control mb-1 mr-sm-1"}>
+                    {props.clubs.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+                <button onClick={book} className={"form-control btn btn-outline-success mb-1 mr-sm-1"}>Book</button>
+            </div>
 
-            <label>Players</label>
-            {props.players.map(p => (
-                <div key={p.id}>
-                    <label>{p.name}</label>
-                    <input type={"checkbox"} value={p.id} onChange={e => selectPlayer(e)}/>
-                </div>
-            ))}
-
-            <button onClick={book}>Book</button>
         </div>
     );
 }

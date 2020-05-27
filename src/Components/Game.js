@@ -12,47 +12,40 @@ export default function Game(props) {
     const [comment, setComment] = useState(game.comment);
 
     return (
-        <div>
+        <div className="form-inline">
 
-            <label>Players</label>
-            <select value={playerId} onChange={e => setPlayer(e.target.value)}>
+            <select value={playerId} onChange={e => setPlayer(e.target.value)} className={"form-control mb-1 mr-sm-1"}>
                 {props.players.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
 
-            <label>Clubs</label>
-            <select value={clubId} onChange={e => setClub(e.target.value)}>
+            <select value={clubId} onChange={e => setClub(e.target.value)} className={"form-control mb-1 mr-sm-1"}>
                 {props.clubs.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
 
-            <label>Result</label>
-            <input value={myScore} onChange={e => setMyScore(e.target.value)} type={"number"} min={0}/>
-            :
-            <input value={opponentScore} onChange={e => setOpponentScore(e.target.value)} type={"number"} min={0}/>
+            <input value={myScore} onChange={e => setMyScore(e.target.value)}
+                   className={"form-control mb-1 mr-sm-1"} placeholder={"My Score"}/>
 
-            <label>Game Type</label>
-            <select value={gameTypeId} onChange={e => setGameTypeId(e.target.value)}>
+            <input value={opponentScore} onChange={e => setOpponentScore(e.target.value)}
+                   className={"form-control mb-1 mr-sm-1"} placeholder={"Opponent Score"}/>
+
+            <select value={gameTypeId} onChange={e => setGameTypeId(e.target.value)}
+                    className={"form-control mb-1 mr-sm-1"}>
                 {props.gameTypes.map(gt => <option key={gt.id} value={gt.id}>{gt.name}</option>)}
             </select>
 
-            <label>Comment</label>
-            <input value={comment} onChange={e => setComment(e.target.value)}/>
+            <input value={comment} onChange={e => setComment(e.target.value)}
+                   className={"form-control mb-1 mr-sm-1"} placeholder={"Comment"}/>
 
-            <button
-                onClick={() => {
-                    props.saveGame({
-                        id,
-                        playerId,
-                        clubId,
-                        myScore,
-                        opponentScore,
-                        gameTypeId,
-                        comment
-                    });
-                }}>
+            <button className={"form-control btn btn-outline-success mb-1 mr-sm-1"}
+                    onClick={() => {
+                        props.saveGame({id, playerId, clubId, myScore, opponentScore, gameTypeId, comment});
+                    }}>
                 Save Result
             </button>
 
-            <button onClick={props.removeGame}>Delete Result</button>
+            <button className={"form-control btn btn-outline-danger mb-1 mr-sm-1"} onClick={props.removeGame}>Delete Result</button>
+
+            <hr className={"mb-4"}/>
 
         </div>
     );
