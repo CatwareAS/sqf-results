@@ -1,30 +1,21 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Game from "./Game";
-import {database} from '../Service/firebase';
-import {UserContext} from "../App";
+import {firebaseService} from '../Services/Firebase';
 
 
 export default function Match(props) {
-
-    const uid = useContext(UserContext);
 
     const [date, setDate] = useState(new Date().toJSON().split('T')[0]);
     const [games, setGames] = useState([]);
 
     useEffect(() => {
-        database.ref('/' + uid + '/matches/' + date).on('value', data => {
-            if (data.exists()) {
-                setGames(data.val().games);
-            } else {
-                setGames([]);
-            }
-        });
-    }, [date, uid]);
+        firebaseService.findGamesByDate(date).then(setGames);
+    }, [date]);
 
     const addGame = () => {
         //Copy some values from last registered game if any
 
-        const lg = games.length === 0 ? false : games[games.length - 1];
+        const lg = games.length === 0 ? false : games[0];
 
         setGames([{
             id: lg ? Math.max(...games.map(g => g.id)) + 1 : 1,
@@ -41,22 +32,16 @@ export default function Match(props) {
     const removeGame = id => {
         const newGames = games.filter(g => g.id !== id);
         setGames(newGames);
-        database.ref('/' + uid + '/matches/' + date).set({games: newGames});
+        firebaseService.setGamesForDate(date, newGames);
     }
 
     const saveGame = game => {
-        // console.log('game: ' + JSON.stringify(game));
-        // console.log('games: ' + JSON.stringify(games));
-
-        //TODO: Why 'games' contains 'game' with old values?
-
         const newGames = [...games];
-        const oldGame = newGames.find(g => g.id === game.id);
-        newGames[newGames.indexOf(oldGame)] = game;
+        const oldGameIndex = newGames.findIndex(g => g.id === game.id);
+        newGames[oldGameIndex] = game;
         setGames(newGames);
 
-        // console.log('games: ' + JSON.stringify(newGames));
-        database.ref('/' + uid + '/matches/' + date).set({games: newGames});
+        firebaseService.setGamesForDate(date, newGames);
     }
 
     return (
@@ -78,7 +63,6 @@ export default function Match(props) {
             <div className="table-responsive">
                 {games.map(
                     game =>
-                        <>
                             <Game players={props.players}
                                   clubs={props.clubs}
                                   gameTypes={props.gameTypes}
@@ -86,8 +70,6 @@ export default function Match(props) {
                                   removeGame={() => removeGame(game.id)}
                                   saveGame={(game) => saveGame(game)}
                                   key={game.id}/>
-                            <hr/>
-                        </>
                 )}
             </div>
 

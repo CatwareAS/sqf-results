@@ -1,6 +1,8 @@
 import React, {useContext, useState} from 'react';
-import {database} from '../Service/firebase';
+import {database} from '../Services/Config';
 import {UserContext} from "../App";
+import {firebaseService} from '../Services/Firebase';
+
 
 
 export default function Booking(props) {
@@ -28,11 +30,13 @@ export default function Booking(props) {
             minute: '2-digit',
             hourCycle: 'h23'
         }).format(new Date(date));
-        database.ref('/' + uid + '/booking').set({
+
+        firebaseService.makeBooking({
             date: formattedDate,
             friends: props.players.filter(p => selectedPlayers.includes(p.id)),
             club: props.clubs.find(c => c.id === clubId)
         });
+
     }
 
     return (
