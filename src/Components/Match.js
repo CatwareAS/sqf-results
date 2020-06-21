@@ -31,17 +31,16 @@ export default function Match(props) {
 
     const removeGame = id => {
         const newGames = games.filter(g => g.id !== id);
-        setGames(newGames);
         firebaseService.setGamesForDate(date, newGames);
+        setGames(newGames);
     }
 
     const saveGame = game => {
-        const newGames = [...games];
-        const oldGameIndex = newGames.findIndex(g => g.id === game.id);
-        newGames[oldGameIndex] = game;
-        setGames(newGames);
+        const oldGameIndex = games.findIndex(g => g.id === game.id);
+        games[oldGameIndex] = game;
 
-        firebaseService.setGamesForDate(date, newGames);
+        firebaseService.setGamesForDate(date, games);
+        setGames(games);
     }
 
     return (
@@ -49,7 +48,7 @@ export default function Match(props) {
 
             <div className="form-inline">
 
-                <input value={date} onChange={e => setDate(e.target.value)} type={"date"}
+                <input value={date} onChange={e => setDate(e.target.value)} type="date"
                        className={"form-control mb-1 mr-sm-1"}/>
 
                 <button onClick={addGame}

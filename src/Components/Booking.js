@@ -1,13 +1,8 @@
-import React, {useContext, useState} from 'react';
-import {database} from '../Services/Config';
-import {UserContext} from "../App";
+import React, {useState} from 'react';
 import {firebaseService} from '../Services/Firebase';
 
 
-
 export default function Booking(props) {
-
-    const uid = useContext(UserContext);
 
     const [date, setDate] = useState(new Date().toJSON().split('.')[0]);
     const [selectedPlayers, setSelectedPlayers] = useState([]);

@@ -42,6 +42,6 @@ export default function Main(props) {
                 </div>
             </BrowserRouter>
             :
-            <></>
+            null
     );
 }
